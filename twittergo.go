@@ -57,11 +57,11 @@ func getEnvEitherCase(k string) string {
 //
 // When using a proxy, disable TLS certificate verification with the following:
 //     export TLS_INSECURE=1
-func NewClient(config *oauth1a.ClientConfig, user *oauth1a.UserConfig) *Client {
+func NewClient(config *oauth1a.ClientConfig, user *oauth1a.UserConfig, host string) *Client {
 	var (
-		host      = "api.twitter.com"
+		//host      = "stream.twitter.com"
 		base      = "https://" + host
-		req, _    = http.NewRequest("GET", "https://api.twitter.com", nil)
+		req, _    = http.NewRequest("GET", base, nil)
 		proxy, _  = http.ProxyFromEnvironment(req)
 		transport *http.Transport
 		tlsconfig *tls.Config

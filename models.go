@@ -259,6 +259,46 @@ func (t Tweet) Id() (id uint64) {
 	return
 }
 
+// It's a retweet status!
+type RetweetStatus map[string]interface{}
+
+func (rs RetweetStatus) RetweetCount() int64 {
+	return rs["retweet_count"].(int64)
+}
+
+func (rs RetweetStatus) FavoriteCount() int64 {
+	return rs["favorite_count"].(int64)
+}
+
+
+// It's a entities
+type Entities map[string]interface{}
+
+func (e Entities) FirstUrl() Url {
+	urls, ok := e["urls"].([]interface{})
+	if ok {
+		if len(urls)>0 {
+			return (urls[0]).(map[string]interface{})
+		} else {
+			return nil
+		}
+	} else {
+		return nil
+	}
+}
+
+// It's a urls
+type Url map[string]interface{}
+
+func (u Url) ExpandedUrl() string {
+	eu, ok := u["expanded_url"]
+	if ok {
+		return eu.(string)
+	} else {
+		return ""
+	}
+}
+
 func (t Tweet) IdStr() string {
 	return t["id_str"].(string)
 }
@@ -267,9 +307,23 @@ func (t Tweet) Text() string {
 	return t["text"].(string)
 }
 
+func (t Tweet) RetweetStatus() RetweetStatus {
+	rs, ok := t["retweeted_status"]
+	if ok {
+		return rs.(map[string]interface{})
+	} else {
+		return nil
+	}
+}
+
 func (t Tweet) User() User {
 	return User(t["user"].(map[string]interface{}))
 }
+
+func (t Tweet) Entities() Entities {
+	return Entities(t["entities"].(map[string]interface{}))
+}
+
 
 func (t Tweet) CreatedAt() (out time.Time) {
 	var (
