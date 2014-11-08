@@ -260,16 +260,26 @@ func (t Tweet) Id() (id uint64) {
 }
 
 // It's a retweet status!
-type RetweetStatus map[string]interface{}
+type RetweetedStatus map[string]interface{}
 
-func (rs RetweetStatus) RetweetCount() int64 {
+func (rs RetweetedStatus) CreatedAt() (out time.Time) {
+	var (
+		err error
+		src = rs["created_at"].(string)
+	)
+	if out, err = time.Parse(time.RubyDate, src); err != nil {
+		panic(fmt.Sprintf("Could not parse time: %v", err))
+	}
+	return	
+}
+
+func (rs RetweetedStatus) RetweetCount() int64 {
 	return rs["retweet_count"].(int64)
 }
 
-func (rs RetweetStatus) FavoriteCount() int64 {
+func (rs RetweetedStatus) FavoriteCount() int64 {
 	return rs["favorite_count"].(int64)
 }
-
 
 // It's a entities
 type Entities map[string]interface{}
@@ -307,7 +317,7 @@ func (t Tweet) Text() string {
 	return t["text"].(string)
 }
 
-func (t Tweet) RetweetStatus() RetweetStatus {
+func (t Tweet) RetweetedStatus() RetweetedStatus {
 	rs, ok := t["retweeted_status"]
 	if ok {
 		return rs.(map[string]interface{})
