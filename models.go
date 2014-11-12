@@ -245,22 +245,16 @@ func (u User) ScreenName() string {
 	return u["screen_name"].(string)
 }
 
-// It's a Tweet! (Adorably referred to by the API as a "status").
-type Tweet map[string]interface{}
-
-func (t Tweet) Id() (id uint64) {
-	var (
-		err error
-		src = t["id_str"].(string)
-	)
-	if id, err = strconv.ParseUint(src, 10, 64); err != nil {
-		panic(fmt.Sprintf("Could not parse ID: %v", err))
-	}
-	return
-}
-
 // It's a retweet status!
 type RetweetedStatus map[string]interface{}
+
+func (rs RetweetedStatus) IdStr() string {
+	return rs["id_str"].(string)
+}
+
+func (rs RetweetedStatus) Text() string {
+	return rs["text"].(string)
+}
 
 func (rs RetweetedStatus) CreatedAt() (out time.Time) {
 	var (
@@ -307,6 +301,20 @@ func (u Url) ExpandedUrl() string {
 	} else {
 		return ""
 	}
+}
+
+// It's a Tweet! (Adorably referred to by the API as a "status").
+type Tweet map[string]interface{}
+
+func (t Tweet) Id() (id uint64) {
+	var (
+		err error
+		src = t["id_str"].(string)
+	)
+	if id, err = strconv.ParseUint(src, 10, 64); err != nil {
+		panic(fmt.Sprintf("Could not parse ID: %v", err))
+	}
+	return
 }
 
 func (t Tweet) IdStr() string {
